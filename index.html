@@ -8,11 +8,21 @@
     <script src="script.js"></script>
 </head>
 <body>
-    <h1>Weather Dashboard</h1>
-    <section>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <h1 class="bg-primary bg-gradient text-light text-center py-2">Weather Dashboard</h1>
+
+<div class="col-3">
+    <section id="searchContainer" class="d-flex flex-column text-center p-3 border-bottom border-gray">
         <h2>Search for a City:</h2>
-        <!--Search bar goes here-->
-        <button>Search</button>
+        <textarea name="searchInput" id="searchInput" cols="30" rows="1"  placeholder="Enter city name..."></textarea>
+        <button id="searchButton" class="bg-primary mt-3">Search</button>
     </section>
+
+    <section id="seachHistoryContainer">
+    </section>
+</div>   
+
 </body>
 </html>
