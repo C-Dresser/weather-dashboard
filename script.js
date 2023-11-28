@@ -5,7 +5,7 @@ var searchHistoryContainer = document.getElementById("searchHistoryContainer");
 var searchHistory = [""];
 var searchButton = document.getElementById("searchButton");
 var searchInput = document.getElementById("searchInput");
-var maxHistorySize = 6;
+var maxHistorySize = 15;
 
 //added function to append the array values to the page as buttons
 function updateSearchHistory() {
@@ -13,6 +13,7 @@ function updateSearchHistory() {
     searchHistory.slice(-maxHistorySize).forEach(function (entry) {
         var entryButton = document.createElement("button");
         entryButton.textContent = entry;
+        entryButton.className = "btn btn-secondary m-1";
         searchHistoryContainer.appendChild(entryButton);
     });
 }
