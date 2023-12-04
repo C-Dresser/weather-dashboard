@@ -57,31 +57,44 @@ searchButton.addEventListener('click', function (event) {
         }
 
         updateSearchHistory();
-       fetch(queryURL)
-       .then(function(response) {
-           return response.json();
-       })
-       .then(function(data) {
-           console.log("Weather information for " + city + ":", data);
-           updateCurrentWeather(data);
-       });
+        fetch(queryURL)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            console.log("Weather information for " + city + ":", data);
+            updateCurrentWeather(data);
+            update5DayForecast(data);
+        });
        searchInput.value = "";
     }
 });
+
+//added function to format the date and loose all the additional info from the unix timestamp
+function formatDate(date) {
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+    return month + '/' + day + '/' + year;
+}
+
 //wrote a function to collect data from the api and append data as p elements in the html
 //updated function to include timestamp and weather icon and did some very basic styling
+//updated function to work with formateDate function
+//added code to convert temperature from kelvin to farenheit because duh
 function updateCurrentWeather(data) {
-    forecastInfo.innerHTML = "";
+    var currentForecastContainer = document.getElementById("forecastInfo");
+    currentForecastContainer.innerHTML = "";
 
     var timestamp = data.list[0].dt;
     var currentDate = new Date(timestamp * 1000);
     var currentDateDisplay = document.createElement("p");
-    currentDateDisplay.textContent = currentDate;
-    forecastInfo.appendChild(currentDateDisplay);
+    currentDateDisplay.textContent = formatDate(currentDate);
+    currentForecastContainer.appendChild(currentDateDisplay);
 
     var cityInfo = document.createElement("p");
     cityInfo.textContent = data.city.name;
-    forecastInfo.appendChild(cityInfo);
+    currentForecastContainer.appendChild(cityInfo);
     cityInfo.style.fontWeight = "bold";
     cityInfo.style.fontSize = "30px";
 
@@ -93,17 +106,58 @@ function updateCurrentWeather(data) {
     iconImg.style.height = "50px";
     iconImg.style.display = "block";
     iconImg.style.margin = "auto";
-    forecastInfo.appendChild(iconImg);
+    currentForecastContainer.appendChild(iconImg);
+
+    var temperatureKelvin = data.list[0].main.temp;
+    var temperatureFahrenheit = (temperatureKelvin - 273.15) * 9/5 + 32;
 
     var temperatureP = document.createElement("p");
-    temperatureP.textContent = "Temperature: " + data.list[0].main.temp;
+    temperatureP.textContent = "Temperature: " + temperatureFahrenheit.toFixed(2) + " °F";
     forecastInfo.appendChild(temperatureP);
 
     var windSpeedP = document.createElement("p");
     windSpeedP.textContent = "Wind Speed: " + data.list[0].wind.speed;
-    forecastInfo.appendChild(windSpeedP);
+    currentForecastContainer.appendChild(windSpeedP);
 
     var humidityP = document.createElement("p");
     humidityP.textContent = "Humidity: " + data.list[0].main.humidity;
-    forecastInfo.appendChild(humidityP);
+    currentForecastContainer.appendChild(humidityP);
+}
+
+//added function for the 5 day forecast to display as seperate cards in the 5 day forecast container. doesnt do the correct dates yet
+
+function update5DayForecast(data) {
+    var fiveDayForecastContainer = document.getElementById("cardContainer");
+    fiveDayForecastContainer.innerHTML = "";
+    
+    var fiveDayForecastData = data.list.slice(1, 6);
+
+    fiveDayForecastData.forEach(function (forecast) {
+        var timestamp = forecast.dt;
+        var currentDate = new Date(timestamp * 1000);
+
+        var cardContainer = document.createElement("div");
+        cardContainer.className = "card";
+
+        var currentDateDisplay = document.createElement("p");
+        currentDateDisplay.textContent = formatDate(currentDate);
+        cardContainer.appendChild(currentDateDisplay);
+
+        var temperatureKelvin = data.list[0].main.temp;
+        var temperatureFahrenheit = (temperatureKelvin - 273.15) * 9/5 + 32;
+
+        var temperatureP = document.createElement("p");
+        temperatureP.textContent = "Temp: " + temperatureFahrenheit.toFixed(2) + " °F";
+        cardContainer.appendChild(temperatureP);
+
+        var windSpeedP = document.createElement("p");
+        windSpeedP.textContent = "Wind Speed: " + forecast.wind.speed;
+        cardContainer.appendChild(windSpeedP);
+
+        var humidityP = document.createElement("p");
+        humidityP.textContent = "Humidity: " + forecast.main.humidity;
+        cardContainer.appendChild(humidityP);
+
+        fiveDayForecastContainer.appendChild(cardContainer);
+    });
 }
