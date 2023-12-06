@@ -6,7 +6,7 @@ This app will allow the user to enter a city in the seach bar, then upon searchi
 
 ## Links
 
-[Live Site]()
+[Live Site](https://c-dresser.github.io/weather-dashboard/)
 
 ## Screenshots
 
